@@ -2,73 +2,1916 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nãbēēs Screenshot & Recording API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaptureAPI | Nãbēēs Screenshot & Recording API</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background:#f5f5f5; }
-        h1, h3 { color: #222; }
-        .button { display: inline-block; padding: 10px 20px; margin: 10px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
-        .button:hover { background: #0056b3; }
-        .endpoint { background: #fff; padding: 20px; margin: 10px 0; border-radius: 5px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
-        input, select { padding: 8px; margin: 5px 0; width: 100%; }
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #9ca3af;
+            --gray-light: #e5e7eb;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --radius: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 2.5rem 0;
+            border-radius: 0 0 var(--radius) var(--radius);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.1;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-text h1 {
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .creator-badge {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main content */
+        .dashboard-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-subtitle {
+            color: var(--dark);
+            opacity: 0.7;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            font-size: 1.1rem;
+        }
+
+        .endpoints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .endpoints-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .endpoint-card {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            transition: var(--transition);
+            border: 1px solid var(--gray-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .endpoint-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .endpoint-card.recording::before {
+            background: linear-gradient(90deg, var(--secondary) 0%, #059669 100%);
+        }
+
+        .endpoint-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .endpoint-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .screenshot-icon {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .recording-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .endpoint-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .endpoint-subtitle {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .endpoint-url {
+            background-color: #f8fafc;
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 1.8rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.95rem;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--gray-light);
+        }
+
+        .endpoint-url.recording {
+            border-left-color: var(--secondary);
+        }
+
+        .url-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .url-display code {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .copy-url-btn {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .copy-url-btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .copy-url-btn.copied {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .copy-url-btn.recording {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--secondary);
+        }
+
+        .copy-url-btn.recording:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-label i {
+            color: var(--primary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid var(--gray-light);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: white;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-input.error, .form-select.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .action-button:active {
+            transform: translateY(0);
+        }
+
+        .action-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .action-button.recording {
+            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+
+        .action-button.recording:hover {
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Request URL Preview Section */
+        .request-preview {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid var(--gray-light);
+            display: none;
+        }
+
+        .request-preview.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .request-title {
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .request-url {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-bottom: 1rem;
+            border: 1px solid #334155;
+        }
+
+        .request-url a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .request-url a:hover {
+            text-decoration: underline;
+        }
+
+        .curl-command {
+            background-color: #0f172a;
+            color: #cbd5e1;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-top: 1rem;
+            border: 1px solid #1e293b;
+            display: none;
+        }
+
+        .curl-command.show {
+            display: block;
+        }
+
+        .copy-btn {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        /* Response Viewer */
+        .response-viewer {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid var(--gray-light);
+            display: none;
+        }
+
+        .response-viewer.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .response-title {
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .response-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .response-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 1rem;
+            overflow-x: auto;
+        }
+
+        .response-tab {
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .response-tab:hover {
+            color: var(--primary);
+        }
+
+        .response-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .response-tab.recording.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .response-content {
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .response-pane {
+            display: none;
+        }
+
+        .response-pane.active {
+            display: block;
+        }
+
+        .response-raw {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            border: 1px solid #334155;
+        }
+
+        .response-pretty {
+            background-color: white;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .response-pretty pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .response-details {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .response-detail {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .response-detail:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: var(--dark);
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .detail-value a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .detail-value a:hover {
+            text-decoration: underline;
+        }
+
+        .no-response {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--gray);
+            text-align: center;
+        }
+
+        .no-response i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Result Section */
+        .result-container {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--dark);
+        }
+
+        .result-content {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 2px dashed var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .result-content.loading {
+            border-color: var(--primary);
+            border-style: solid;
+        }
+
+        .result-content.success {
+            border-color: var(--success);
+            border-style: solid;
+        }
+
+        .result-content.error {
+            border-color: var(--danger);
+            border-style: solid;
+        }
+
+        .result-loading {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--primary);
+        }
+
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .result-success {
+            text-align: center;
+            width: 100%;
+        }
+
+        .result-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 1rem 0;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+        }
+
+        .result-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .result-link.recording {
+            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+        }
+
+        .result-error {
+            color: var(--danger);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .result-error i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background-color: white;
+            color: var(--dark);
+            padding: 18px 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: var(--transition);
+            min-width: 320px;
+            max-width: 400px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast.info {
+            border-left-color: var(--primary);
+        }
+
+        .toast-icon {
+            font-size: 1.4rem;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        .toast.info .toast-icon {
+            color: var(--primary);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .close-toast {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            margin-left: 5px;
+        }
+
+        .close-toast:hover {
+            color: var(--dark);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--dark);
+            opacity: 0.7;
+            font-size: 0.95rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            
+            .endpoint-card {
+                padding: 1.8rem;
+            }
+            
+            .toast-container {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+            }
+            
+            .toast {
+                min-width: auto;
+                max-width: 100%;
+            }
+            
+            .endpoint-url {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .copy-url-btn {
+                align-self: flex-end;
+            }
+            
+            .request-header, .response-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .request-actions, .response-actions {
+                align-self: flex-start;
+            }
+            
+            .response-detail {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Nãbēēs Screenshot & Recording API</h1>
-    <p>Creator: Nãbēēs</p>
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
-    <div class="endpoint">
-        <h3>Screenshot</h3>
-        <p>Endpoint: <code>/api/screenshot</code></p>
-        <label>URL:</label>
-        <input type="text" id="screenshotUrl" placeholder="https://example.com">
-        <label>Device:</label>
-        <select id="screenshotDevice">
-            <option value="desktop">Desktop</option>
-            <option value="laptop">Laptop</option>
-            <option value="tablet">Tablet</option>
-            <option value="phone">Phone</option>
-            <option value="full">Full Page</option>
-        </select>
-        <button class="button" onclick="takeScreenshot()">Take Screenshot</button>
-        <p id="screenshotResult"></p>
-    </div>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>CaptureAPI</h1>
+                        <p>Screenshot & Recording API</p>
+                    </div>
+                </div>
+                <div class="creator-badge">
+                    <i class="fas fa-code"></i> Created by Nãbēēs
+                </div>
+            </div>
+        </div>
+    </header>
 
-    <div class="endpoint">
-        <h3>Screen Recording</h3>
-        <p>Endpoint: <code>/api/screenrecord</code></p>
-        <label>URL:</label>
-        <input type="text" id="recordUrl" placeholder="https://example.com">
-        <label>Device:</label>
-        <select id="recordDevice">
-            <option value="desktop">Desktop</option>
-            <option value="laptop">Laptop</option>
-            <option value="tablet">Tablet</option>
-            <option value="phone">Phone</option>
-            <option value="full">Full Page</option>
-        </select>
-        <label>Duration (seconds, max 30):</label>
-        <input type="number" id="recordDuration" value="10" min="1" max="30">
-        <button class="button" onclick="recordScreen()">Start Recording</button>
-        <p id="recordResult"></p>
-    </div>
+    <main class="container">
+        <div class="dashboard-intro">
+            <h2 class="dashboard-title">API Dashboard</h2>
+            <p class="dashboard-subtitle">Capture screenshots and record screen activity from any website with our powerful API. Customize device type, duration, and more.</p>
+            <div class="api-status">
+                <i class="fas fa-circle" style="font-size: 0.7rem;"></i>
+                <span>API Status: <strong>Connected</strong></span>
+            </div>
+        </div>
+
+        <div class="endpoints-grid">
+            <!-- Screenshot Endpoint -->
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <div class="endpoint-icon screenshot-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div>
+                        <h3 class="endpoint-title">Screenshot API</h3>
+                        <p class="endpoint-subtitle">Capture high-quality screenshots instantly</p>
+                    </div>
+                </div>
+                
+                <div class="endpoint-url">
+                    <div class="url-display">
+                        <i class="fas fa-link"></i>
+                        <code>/api/screenshot</code>
+                    </div>
+                    <button class="copy-url-btn" onclick="showRequestPreview('screenshot')">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Request URL</span>
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="screenshotUrl">
+                        <i class="fas fa-globe"></i>
+                        <span>Website URL</span>
+                    </label>
+                    <input type="url" id="screenshotUrl" class="form-input" 
+                           placeholder="https://example.com" value="https://www.wikipedia.org"
+                           required oninput="updateRequestPreview('screenshot')">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="screenshotDevice">
+                            <i class="fas fa-laptop"></i>
+                            <span>Device Type</span>
+                        </label>
+                        <select id="screenshotDevice" class="form-select" onchange="updateRequestPreview('screenshot')">
+                            <option value="desktop">Desktop (1920x1080)</option>
+                            <option value="laptop">Laptop (1366x768)</option>
+                            <option value="tablet">Tablet (768x1024)</option>
+                            <option value="phone">Phone (375x667)</option>
+                            <option value="full">Full Page</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="screenshotDelay">
+                            <i class="fas fa-clock"></i>
+                            <span>Delay (seconds)</span>
+                        </label>
+                        <input type="number" id="screenshotDelay" class="form-input" 
+                               min="0" max="10" value="2" placeholder="0" oninput="updateRequestPreview('screenshot')">
+                    </div>
+                </div>
+                
+                <!-- Request URL Preview -->
+                <div id="screenshotRequestPreview" class="request-preview">
+                    <div class="request-header">
+                        <div class="request-title">
+                            <i class="fas fa-code"></i>
+                            <span>Request URL</span>
+                        </div>
+                        <div class="request-actions">
+                            <button class="copy-btn" onclick="copyRequestUrl('screenshot')">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy URL</span>
+                            </button>
+                            <button class="copy-btn" onclick="toggleCurlCommand('screenshot')">
+                                <i class="fas fa-terminal"></i>
+                                <span>cURL</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="request-url" id="screenshotRequestUrl">
+                        <!-- Request URL will be inserted here -->
+                    </div>
+                    <div class="curl-command" id="screenshotCurlCommand">
+                        <!-- cURL command will be inserted here -->
+                    </div>
+                </div>
+                
+                <button id="screenshotButton" class="action-button" onclick="takeScreenshot()">
+                    <i class="fas fa-camera"></i> Take Screenshot
+                </button>
+                
+                <!-- Response Viewer -->
+                <div id="screenshotResponseViewer" class="response-viewer">
+                    <div class="response-header">
+                        <div class="response-title">
+                            <i class="fas fa-server"></i>
+                            <span>API Response</span>
+                        </div>
+                        <div class="response-actions">
+                            <button class="copy-btn" onclick="copyResponse('screenshot')">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy Response</span>
+                            </button>
+                            <button class="copy-btn" onclick="toggleResponseViewer('screenshot')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="response-tabs">
+                        <button class="response-tab active" onclick="switchResponseTab('screenshot', 'details')">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Details</span>
+                        </button>
+                        <button class="response-tab" onclick="switchResponseTab('screenshot', 'pretty')">
+                            <i class="fas fa-code"></i>
+                            <span>Pretty</span>
+                        </button>
+                        <button class="response-tab" onclick="switchResponseTab('screenshot', 'raw')">
+                            <i class="fas fa-terminal"></i>
+                            <span>Raw JSON</span>
+                        </button>
+                    </div>
+                    <div class="response-content">
+                        <div id="screenshotResponseDetails" class="response-pane active">
+                            <div class="no-response">
+                                <i class="fas fa-code"></i>
+                                <p>No response data yet. Make a request to see the API response.</p>
+                            </div>
+                        </div>
+                        <div id="screenshotResponsePretty" class="response-pane response-pretty">
+                            <!-- Pretty JSON will be inserted here -->
+                        </div>
+                        <div id="screenshotResponseRaw" class="response-pane response-raw">
+                            <!-- Raw JSON will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-container">
+                    <h4 class="result-title">
+                        <i class="fas fa-image"></i>
+                        <span>Result</span>
+                    </h4>
+                    <div id="screenshotResult" class="result-content">
+                        <div style="text-align: center; color: var(--gray);">
+                            <i class="fas fa-image" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>Your screenshot will appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recording Endpoint -->
+            <div class="endpoint-card recording">
+                <div class="endpoint-header">
+                    <div class="endpoint-icon recording-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div>
+                        <h3 class="endpoint-title">Screen Recording API</h3>
+                        <p class="endpoint-subtitle">Record screen activity as video</p>
+                    </div>
+                </div>
+                
+                <div class="endpoint-url recording">
+                    <div class="url-display">
+                        <i class="fas fa-link"></i>
+                        <code>/api/screenrecord</code>
+                    </div>
+                    <button class="copy-url-btn recording" onclick="showRequestPreview('recording')">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Request URL</span>
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="recordUrl">
+                        <i class="fas fa-globe"></i>
+                        <span>Website URL</span>
+                    </label>
+                    <input type="url" id="recordUrl" class="form-input" 
+                           placeholder="https://example.com" value="https://www.wikipedia.org"
+                           required oninput="updateRequestPreview('recording')">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="recordDevice">
+                            <i class="fas fa-laptop"></i>
+                            <span>Device Type</span>
+                        </label>
+                        <select id="recordDevice" class="form-select" onchange="updateRequestPreview('recording')">
+                            <option value="desktop">Desktop (1920x1080)</option>
+                            <option value="laptop">Laptop (1366x768)</option>
+                            <option value="tablet">Tablet (768x1024)</option>
+                            <option value="phone">Phone (375x667)</option>
+                            <option value="full">Full Page</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="recordDuration">
+                            <i class="fas fa-hourglass-half"></i>
+                            <span>Duration (seconds)</span>
+                        </label>
+                        <input type="number" id="recordDuration" class="form-input" 
+                               min="1" max="30" value="10" required oninput="updateRequestPreview('recording')">
+                    </div>
+                </div>
+                
+                <!-- Request URL Preview -->
+                <div id="recordingRequestPreview" class="request-preview">
+                    <div class="request-header">
+                        <div class="request-title">
+                            <i class="fas fa-code"></i>
+                            <span>Request URL</span>
+                        </div>
+                        <div class="request-actions">
+                            <button class="copy-btn" onclick="copyRequestUrl('recording')">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy URL</span>
+                            </button>
+                            <button class="copy-btn" onclick="toggleCurlCommand('recording')">
+                                <i class="fas fa-terminal"></i>
+                                <span>cURL</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="request-url" id="recordingRequestUrl">
+                        <!-- Request URL will be inserted here -->
+                    </div>
+                    <div class="curl-command" id="recordingCurlCommand">
+                        <!-- cURL command will be inserted here -->
+                    </div>
+                </div>
+                
+                <button id="recordButton" class="action-button recording" onclick="recordScreen()">
+                    <i class="fas fa-video"></i> Start Recording
+                </button>
+                
+                <!-- Response Viewer -->
+                <div id="recordingResponseViewer" class="response-viewer">
+                    <div class="response-header">
+                        <div class="response-title">
+                            <i class="fas fa-server"></i>
+                            <span>API Response</span>
+                        </div>
+                        <div class="response-actions">
+                            <button class="copy-btn" onclick="copyResponse('recording')">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy Response</span>
+                            </button>
+                            <button class="copy-btn" onclick="toggleResponseViewer('recording')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="response-tabs">
+                        <button class="response-tab recording active" onclick="switchResponseTab('recording', 'details')">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Details</span>
+                        </button>
+                        <button class="response-tab recording" onclick="switchResponseTab('recording', 'pretty')">
+                            <i class="fas fa-code"></i>
+                            <span>Pretty</span>
+                        </button>
+                        <button class="response-tab recording" onclick="switchResponseTab('recording', 'raw')">
+                            <i class="fas fa-terminal"></i>
+                            <span>Raw JSON</span>
+                        </button>
+                    </div>
+                    <div class="response-content">
+                        <div id="recordingResponseDetails" class="response-pane active">
+                            <div class="no-response">
+                                <i class="fas fa-code"></i>
+                                <p>No response data yet. Make a request to see the API response.</p>
+                            </div>
+                        </div>
+                        <div id="recordingResponsePretty" class="response-pane response-pretty">
+                            <!-- Pretty JSON will be inserted here -->
+                        </div>
+                        <div id="recordingResponseRaw" class="response-pane response-raw">
+                            <!-- Raw JSON will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-container">
+                    <h4 class="result-title">
+                        <i class="fas fa-film"></i>
+                        <span>Result</span>
+                    </h4>
+                    <div id="recordResult" class="result-content">
+                        <div style="text-align: center; color: var(--gray);">
+                            <i class="fas fa-video" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>Your recording will appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="container">
+        <div class="footer">
+            <p>CaptureAPI v1.0 • Powered by Nãbēēs Screenshot & Recording API</p>
+            <p>For documentation and API key requests, contact: api@nabees.com</p>
+        </div>
+    </footer>
 
     <script>
+        // Toast notification system
+        function showToast(message, type = "info", title = "") {
+            const toastContainer = document.getElementById("toastContainer");
+            const toastId = "toast-" + Date.now();
+            
+            const icons = {
+                success: "fa-check-circle",
+                error: "fa-exclamation-circle",
+                info: "fa-info-circle"
+            };
+            
+            const defaultTitles = {
+                success: "Success",
+                error: "Error",
+                info: "Info"
+            };
+            
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.id = toastId;
+            toast.innerHTML = `
+                <i class="toast-icon fas ${icons[type]}"></i>
+                <div class="toast-content">
+                    <div class="toast-title">${title || defaultTitles[type]}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="close-toast" onclick="closeToast('${toastId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add("show");
+            }, 10);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                closeToast(toastId);
+            }, 5000);
+        }
+        
+        function closeToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.classList.remove("show");
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }
+        }
+        
+        // Copy to clipboard function
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    return true;
+                } catch (err) {
+                    document.body.removeChild(textArea);
+                    return false;
+                }
+            }
+        }
+        
+        // Show request preview
+        function showRequestPreview(type) {
+            const previewElement = document.getElementById(`${type}RequestPreview`);
+            updateRequestPreview(type);
+            
+            if (previewElement.classList.contains('show')) {
+                previewElement.classList.remove('show');
+            } else {
+                previewElement.classList.add('show');
+            }
+        }
+        
+        // Update request preview URL
+        function updateRequestPreview(type) {
+            let url, params, fullUrl, curlCommand;
+            
+            if (type === 'screenshot') {
+                const screenshotUrl = document.getElementById('screenshotUrl').value;
+                const device = document.getElementById('screenshotDevice').value;
+                const delay = document.getElementById('screenshotDelay').value || 0;
+                
+                params = `url=${encodeURIComponent(screenshotUrl)}&device=${device}`;
+                if (delay && delay > 0) {
+                    params += `&delay=${delay}`;
+                }
+                
+                url = `/api/screenshot?${params}`;
+                fullUrl = `${window.location.origin}${url}`;
+                
+                curlCommand = `curl "${fullUrl}"`;
+            } else if (type === 'recording') {
+                const recordUrl = document.getElementById('recordUrl').value;
+                const device = document.getElementById('recordDevice').value;
+                const duration = document.getElementById('recordDuration').value;
+                
+                params = `url=${encodeURIComponent(recordUrl)}&device=${device}&duration=${duration}`;
+                url = `/api/screenrecord?${params}`;
+                fullUrl = `${window.location.origin}${url}`;
+                
+                curlCommand = `curl "${fullUrl}"`;
+            }
+            
+            // Update the preview display
+            const requestUrlElement = document.getElementById(`${type}RequestUrl`);
+            const curlCommandElement = document.getElementById(`${type}CurlCommand`);
+            
+            requestUrlElement.innerHTML = `<a href="${fullUrl}" target="_blank">${fullUrl}</a>`;
+            curlCommandElement.textContent = curlCommand;
+        }
+        
+        // Copy request URL
+        async function copyRequestUrl(type) {
+            const fullUrl = document.getElementById(`${type}RequestUrl`).querySelector('a').href;
+            const success = await copyToClipboard(fullUrl);
+            
+            if (success) {
+                // Visual feedback
+                const copyBtn = event.target.closest('.copy-btn');
+                const originalText = copyBtn.querySelector('span').textContent;
+                const originalIcon = copyBtn.querySelector('i').className;
+                
+                copyBtn.classList.add('copied');
+                copyBtn.querySelector('span').textContent = 'Copied!';
+                copyBtn.querySelector('i').className = 'fas fa-check';
+                
+                showToast('Request URL copied to clipboard', 'success', 'Copied');
+                
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.querySelector('span').textContent = originalText;
+                    copyBtn.querySelector('i').className = originalIcon;
+                }, 2000);
+            } else {
+                showToast('Failed to copy URL to clipboard', 'error', 'Error');
+            }
+        }
+        
+        // Toggle cURL command display
+        function toggleCurlCommand(type) {
+            const curlElement = document.getElementById(`${type}CurlCommand`);
+            const toggleBtn = event.target.closest('.copy-btn');
+            
+            if (curlElement.classList.contains('show')) {
+                curlElement.classList.remove('show');
+                toggleBtn.querySelector('span').textContent = 'cURL';
+            } else {
+                curlElement.classList.add('show');
+                toggleBtn.querySelector('span').textContent = 'Hide cURL';
+            }
+        }
+        
+        // Copy cURL command
+        async function copyCurlCommand(type) {
+            const curlCommand = document.getElementById(`${type}CurlCommand`).textContent;
+            const success = await copyToClipboard(curlCommand);
+            
+            if (success) {
+                showToast('cURL command copied to clipboard', 'success', 'Copied');
+            } else {
+                showToast('Failed to copy cURL command', 'error', 'Error');
+            }
+        }
+        
+        // Toggle response viewer
+        function toggleResponseViewer(type) {
+            const responseViewer = document.getElementById(`${type}ResponseViewer`);
+            if (responseViewer.classList.contains('show')) {
+                responseViewer.classList.remove('show');
+            } else {
+                responseViewer.classList.add('show');
+            }
+        }
+        
+        // Switch response tabs
+        function switchResponseTab(type, tabName) {
+            // Update tabs
+            const tabs = document.querySelectorAll(`#${type}ResponseViewer .response-tab`);
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.closest('.response-tab').classList.add('active');
+            
+            // Update panes
+            const panes = document.querySelectorAll(`#${type}ResponseViewer .response-pane`);
+            panes.forEach(pane => pane.classList.remove('active'));
+            document.getElementById(`${type}Response${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add('active');
+        }
+        
+        // Format JSON for pretty display
+        function formatJSON(json) {
+            try {
+                return JSON.stringify(json, null, 2);
+            } catch (e) {
+                return String(json);
+            }
+        }
+        
+        // Syntax highlight JSON
+        function syntaxHighlight(json) {
+            if (typeof json != 'string') {
+                json = JSON.stringify(json, undefined, 2);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, 
+            function (match) {
+                let cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+        
+        // Update response viewer
+        function updateResponseViewer(type, responseData) {
+            const responseViewer = document.getElementById(`${type}ResponseViewer`);
+            const detailsPane = document.getElementById(`${type}ResponseDetails`);
+            const prettyPane = document.getElementById(`${type}ResponsePretty`);
+            const rawPane = document.getElementById(`${type}ResponseRaw`);
+            
+            // Show the response viewer
+            responseViewer.classList.add('show');
+            
+            // Update details pane
+            const timestamp = new Date().toISOString();
+            let detailsHTML = '<div class="response-details">';
+            
+            if (responseData.url) {
+                // Successful response
+                detailsHTML += `
+                    <div class="response-detail">
+                        <div class="detail-label">Status:</div>
+                        <div class="detail-value"><span style="color: var(--success); font-weight: 600;">Success</span></div>
+                    </div>
+                    <div class="response-detail">
+                        <div class="detail-label">URL:</div>
+                        <div class="detail-value"><a href="${responseData.url}" target="_blank">${responseData.url}</a></div>
+                    </div>
+                    <div class="response-detail">
+                        <div class="detail-label">Timestamp:</div>
+                        <div class="detail-value">${timestamp}</div>
+                    </div>
+                    <div class="response-detail">
+                        <div class="detail-label">Device:</div>
+                        <div class="detail-value">${responseData.device || 'Not specified'}</div>
+                    </div>
+                `;
+                
+                if (responseData.duration) {
+                    detailsHTML += `
+                        <div class="response-detail">
+                            <div class="detail-label">Duration:</div>
+                            <div class="detail-value">${responseData.duration} seconds</div>
+                        </div>
+                    `;
+                }
+                
+                if (responseData.delay) {
+                    detailsHTML += `
+                        <div class="response-detail">
+                            <div class="detail-label">Delay:</div>
+                            <div class="detail-value">${responseData.delay} seconds</div>
+                        </div>
+                    `;
+                }
+            } else {
+                // Error response
+                detailsHTML += `
+                    <div class="response-detail">
+                        <div class="detail-label">Status:</div>
+                        <div class="detail-value"><span style="color: var(--danger); font-weight: 600;">Error</span></div>
+                    </div>
+                    <div class="response-detail">
+                        <div class="detail-label">Error:</div>
+                        <div class="detail-value">${responseData.error || 'Unknown error'}</div>
+                    </div>
+                    <div class="response-detail">
+                        <div class="detail-label">Timestamp:</div>
+                        <div class="detail-value">${timestamp}</div>
+                    </div>
+                `;
+            }
+            
+            detailsHTML += '</div>';
+            detailsPane.innerHTML = detailsHTML;
+            
+            // Update pretty JSON pane
+            const formattedJSON = formatJSON(responseData);
+            prettyPane.innerHTML = `<pre>${syntaxHighlight(formattedJSON)}</pre>`;
+            
+            // Update raw JSON pane
+            rawPane.textContent = formattedJSON;
+            
+            // Style the pretty JSON
+            const style = document.createElement('style');
+            style.textContent = `
+                .key { color: #c678dd; }
+                .string { color: #98c379; }
+                .number { color: #d19a66; }
+                .boolean { color: #56b6c2; }
+                .null { color: #e06c75; }
+            `;
+            prettyPane.querySelector('pre').appendChild(style);
+        }
+        
+        // Copy response
+        async function copyResponse(type) {
+            const rawPane = document.getElementById(`${type}ResponseRaw`);
+            const responseText = rawPane.textContent;
+            
+            if (!responseText || responseText.includes('No response data yet')) {
+                showToast('No response data to copy', 'error', 'Error');
+                return;
+            }
+            
+            const success = await copyToClipboard(responseText);
+            
+            if (success) {
+                // Visual feedback
+                const copyBtn = event.target.closest('.copy-btn');
+                const originalText = copyBtn.querySelector('span').textContent;
+                const originalIcon = copyBtn.querySelector('i').className;
+                
+                copyBtn.classList.add('copied');
+                copyBtn.querySelector('span').textContent = 'Copied!';
+                copyBtn.querySelector('i').className = 'fas fa-check';
+                
+                showToast('Response copied to clipboard', 'success', 'Copied');
+                
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.querySelector('span').textContent = originalText;
+                    copyBtn.querySelector('i').className = originalIcon;
+                }, 2000);
+            } else {
+                showToast('Failed to copy response', 'error', 'Error');
+            }
+        }
+        
+        // Loading state management
+        function setLoading(buttonId, isLoading, text = "") {
+            const button = document.getElementById(buttonId);
+            
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = `<div class="spinner"></div> ${text || "Processing..."}`;
+            } else {
+                button.disabled = false;
+                if (buttonId === "screenshotButton") {
+                    button.innerHTML = `<i class="fas fa-camera"></i> Take Screenshot`;
+                } else {
+                    button.innerHTML = `<i class="fas fa-video"></i> Start Recording`;
+                }
+            }
+        }
+        
+        // Update result display
+        function updateResult(elementId, type, data) {
+            const resultElement = document.getElementById(elementId);
+            
+            if (type === "loading") {
+                resultElement.className = "result-content loading";
+                resultElement.innerHTML = `
+                    <div class="result-loading">
+                        <div class="spinner"></div>
+                        <span>${data.message || "Processing..."}</span>
+                    </div>
+                `;
+            } 
+            else if (type === "success") {
+                resultElement.className = "result-content success";
+                resultElement.innerHTML = `
+                    <div class="result-success">
+                        <i class="fas fa-check-circle" style="color: var(--success); font-size: 2.8rem; margin-bottom: 1rem;"></i>
+                        <h4 style="margin-bottom: 0.5rem;">${data.title || "Success!"}</h4>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">${data.message || ""}</p>
+                        <a href="${data.url}" class="result-link ${elementId.includes('record') ? 'recording' : ''}" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> ${elementId.includes('record') ? 'View Recording' : 'View Screenshot'}
+                        </a>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray);">
+                            <i class="fas fa-clock"></i> ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </p>
+                    </div>
+                `;
+            }
+            else if (type === "error") {
+                resultElement.className = "result-content error";
+                resultElement.innerHTML = `
+                    <div class="result-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h4 style="margin-bottom: 0.5rem;">Error</h4>
+                        <p>${data.message || "An error occurred"}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Validation function
+        function validateUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        // Your original API functions with enhanced UI
         async function takeScreenshot() {
             const url = document.getElementById('screenshotUrl').value;
             const device = document.getElementById('screenshotDevice').value;
-            const res = await fetch(`/api/screenshot?url=${encodeURIComponent(url)}&device=${device}`);
-            const data = await res.json();
-            document.getElementById('screenshotResult').innerHTML = data.url ? `<a href="${data.url}" target="_blank">View Screenshot</a>` : JSON.stringify(data);
+            const delay = document.getElementById('screenshotDelay').value || 0;
+            
+            // Validation
+            if (!url) {
+                showToast("Please enter a valid URL", "error", "Validation Error");
+                document.getElementById('screenshotUrl').classList.add('error');
+                return;
+            }
+            
+            if (!validateUrl(url)) {
+                showToast("Please enter a valid URL (include http:// or https://)", "error", "Validation Error");
+                document.getElementById('screenshotUrl').classList.add('error');
+                return;
+            }
+            
+            // Clear any previous error state
+            document.getElementById('screenshotUrl').classList.remove('error');
+            
+            // Set loading state
+            setLoading("screenshotButton", true, "Capturing...");
+            updateResult("screenshotResult", "loading", { 
+                message: `Capturing screenshot of ${url}...` 
+            });
+            
+            try {
+                // Build query parameters
+                let apiUrl = `/api/screenshot?url=${encodeURIComponent(url)}&device=${device}`;
+                if (delay && delay > 0) {
+                    apiUrl += `&delay=${delay}`;
+                }
+                
+                // Make the API call (your original code)
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+                
+                // Update response viewer
+                const responseData = {
+                    ...data,
+                    device: device,
+                    delay: delay > 0 ? delay : undefined,
+                    timestamp: new Date().toISOString()
+                };
+                updateResponseViewer('screenshot', responseData);
+                
+                if (data.url) {
+                    // Success
+                    updateResult("screenshotResult", "success", {
+                        url: data.url,
+                        title: "Screenshot Captured!",
+                        message: `Device: ${device}${delay > 0 ? ` | Delay: ${delay}s` : ''}`
+                    });
+                    
+                    showToast(`Screenshot captured successfully!`, "success", "Success");
+                } else {
+                    // API returned error
+                    updateResult("screenshotResult", "error", {
+                        message: data.error || "Failed to capture screenshot"
+                    });
+                    
+                    showToast(data.error || "Failed to capture screenshot", "error", "API Error");
+                }
+            } catch (error) {
+                // Network or other error
+                console.error('Screenshot error:', error);
+                updateResult("screenshotResult", "error", {
+                    message: "Failed to connect to the API. Please try again."
+                });
+                
+                const errorData = {
+                    error: "Failed to connect to the API. Please try again.",
+                    timestamp: new Date().toISOString()
+                };
+                updateResponseViewer('screenshot', errorData);
+                
+                showToast("Failed to connect to the API. Please try again.", "error", "Connection Error");
+            } finally {
+                // Reset button state
+                setLoading("screenshotButton", false);
+            }
         }
 
         async function recordScreen() {
             const url = document.getElementById('recordUrl').value;
             const device = document.getElementById('recordDevice').value;
             const duration = document.getElementById('recordDuration').value;
-            const res = await fetch(`/api/screenrecord?url=${encodeURIComponent(url)}&device=${device}&duration=${duration}`);
-            const data = await res.json();
-            document.getElementById('recordResult').innerHTML = data.url ? `<a href="${data.url}" target="_blank">View Recording</a>` : JSON.stringify(data);
+            
+            // Validation
+            if (!url) {
+                showToast("Please enter a valid URL", "error", "Validation Error");
+                document.getElementById('recordUrl').classList.add('error');
+                return;
+            }
+            
+            if (!validateUrl(url)) {
+                showToast("Please enter a valid URL (include http:// or https://)", "error", "Validation Error");
+                document.getElementById('recordUrl').classList.add('error');
+                return;
+            }
+            
+            if (!duration || duration < 1 || duration > 30) {
+                showToast("Duration must be between 1 and 30 seconds", "error", "Validation Error");
+                document.getElementById('recordDuration').classList.add('error');
+                return;
+            }
+            
+            // Clear any previous error state
+            document.getElementById('recordUrl').classList.remove('error');
+            document.getElementById('recordDuration').classList.remove('error');
+            
+            // Set loading state
+            setLoading("recordButton", true, "Recording...");
+            updateResult("recordResult", "loading", { 
+                message: `Recording ${duration} seconds of ${url}...` 
+            });
+            
+            try {
+                // Build query parameters
+                const apiUrl = `/api/screenrecord?url=${encodeURIComponent(url)}&device=${device}&duration=${duration}`;
+                
+                // Make the API call (your original code)
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+                
+                // Update response viewer
+                const responseData = {
+                    ...data,
+                    device: device,
+                    duration: duration,
+                    timestamp: new Date().toISOString()
+                };
+                updateResponseViewer('recording', responseData);
+                
+                if (data.url) {
+                    // Success
+                    updateResult("recordResult", "success", {
+                        url: data.url,
+                        title: "Recording Completed!",
+                        message: `Device: ${device} | Duration: ${duration}s`
+                    });
+                    
+                    showToast(`Recording completed successfully!`, "success", "Success");
+                } else {
+                    // API returned error
+                    updateResult("recordResult", "error", {
+                        message: data.error || "Failed to record screen"
+                    });
+                    
+                    showToast(data.error || "Failed to record screen", "error", "API Error");
+                }
+            } catch (error) {
+                // Network or other error
+                console.error('Recording error:', error);
+                updateResult("recordResult", "error", {
+                    message: "Failed to connect to the API. Please try again."
+                });
+                
+                const errorData = {
+                    error: "Failed to connect to the API. Please try again.",
+                    timestamp: new Date().toISOString()
+                };
+                updateResponseViewer('recording', errorData);
+                
+                showToast("Failed to connect to the API. Please try again.", "error", "Connection Error");
+            } finally {
+                // Reset button state
+                setLoading("recordButton", false);
+            }
         }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize request previews
+            updateRequestPreview('screenshot');
+            updateRequestPreview('recording');
+            
+            // Add input validation listeners
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('error');
+                    
+                    if (this.type === 'url' && this.value && !validateUrl(this.value)) {
+                        this.classList.add('error');
+                    }
+                    
+                    // Update preview for the corresponding form
+                    if (this.closest('.endpoint-card').classList.contains('recording')) {
+                        updateRequestPreview('recording');
+                    } else {
+                        updateRequestPreview('screenshot');
+                    }
+                });
+            });
+            
+            // Add change listeners to selects
+            const selects = document.querySelectorAll('.form-select');
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    if (this.closest('.endpoint-card').classList.contains('recording')) {
+                        updateRequestPreview('recording');
+                    } else {
+                        updateRequestPreview('screenshot');
+                    }
+                });
+            });
+            
+            // Show welcome message
+            setTimeout(() => {
+                showToast(
+                    "Welcome to CaptureAPI! Enter a URL and click a button to start.", 
+                    "info", 
+                    "Ready to Capture"
+                );
+            }, 1000);
+        });
     </script>
 </body>
 </html>
