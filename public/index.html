@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nãbēēs Screenshot & Recording API</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background:#f5f5f5; }
+        h1, h3 { color: #222; }
+        .button { display: inline-block; padding: 10px 20px; margin: 10px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .button:hover { background: #0056b3; }
+        .endpoint { background: #fff; padding: 20px; margin: 10px 0; border-radius: 5px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+        input, select { padding: 8px; margin: 5px 0; width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>Nãbēēs Screenshot & Recording API</h1>
+    <p>Creator: Nãbēēs</p>
+
+    <div class="endpoint">
+        <h3>Screenshot</h3>
+        <p>Endpoint: <code>/api/screenshot</code></p>
+        <label>URL:</label>
+        <input type="text" id="screenshotUrl" placeholder="https://example.com">
+        <label>Device:</label>
+        <select id="screenshotDevice">
+            <option value="desktop">Desktop</option>
+            <option value="laptop">Laptop</option>
+            <option value="tablet">Tablet</option>
+            <option value="phone">Phone</option>
+            <option value="full">Full Page</option>
+        </select>
+        <button class="button" onclick="takeScreenshot()">Take Screenshot</button>
+        <p id="screenshotResult"></p>
+    </div>
+
+    <div class="endpoint">
+        <h3>Screen Recording</h3>
+        <p>Endpoint: <code>/api/screenrecord</code></p>
+        <label>URL:</label>
+        <input type="text" id="recordUrl" placeholder="https://example.com">
+        <label>Device:</label>
+        <select id="recordDevice">
+            <option value="desktop">Desktop</option>
+            <option value="laptop">Laptop</option>
+            <option value="tablet">Tablet</option>
+            <option value="phone">Phone</option>
+            <option value="full">Full Page</option>
+        </select>
+        <label>Duration (seconds, max 30):</label>
+        <input type="number" id="recordDuration" value="10" min="1" max="30">
+        <button class="button" onclick="recordScreen()">Start Recording</button>
+        <p id="recordResult"></p>
+    </div>
+
+    <script>
+        async function takeScreenshot() {
+            const url = document.getElementById('screenshotUrl').value;
+            const device = document.getElementById('screenshotDevice').value;
+            const res = await fetch(`/api/screenshot?url=${encodeURIComponent(url)}&device=${device}`);
+            const data = await res.json();
+            document.getElementById('screenshotResult').innerHTML = data.url ? `<a href="${data.url}" target="_blank">View Screenshot</a>` : JSON.stringify(data);
+        }
+
+        async function recordScreen() {
+            const url = document.getElementById('recordUrl').value;
+            const device = document.getElementById('recordDevice').value;
+            const duration = document.getElementById('recordDuration').value;
+            const res = await fetch(`/api/screenrecord?url=${encodeURIComponent(url)}&device=${device}&duration=${duration}`);
+            const data = await res.json();
+            document.getElementById('recordResult').innerHTML = data.url ? `<a href="${data.url}" target="_blank">View Recording</a>` : JSON.stringify(data);
+        }
+    </script>
+</body>
+</html>
