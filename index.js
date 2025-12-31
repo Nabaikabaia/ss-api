@@ -1,5 +1,3 @@
-process.env.PLAYWRIGHT_BROWSERS_PATH = "0";
-
 import express from "express";
 import { chromium } from "playwright";
 
@@ -23,12 +21,7 @@ app.get("/ss", async (req, res) => {
   try {
     browser = await chromium.launch({
       headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu"
-      ]
+      args: ["--no-sandbox"]
     });
 
     const page = await browser.newPage({
