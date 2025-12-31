@@ -1,6 +1,7 @@
 {
   "name": "nabees-ss-api",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -8,7 +9,6 @@
   },
   "dependencies": {
     "express": "^4.19.2",
-    "express-rate-limit": "^7.0.0",
-    "playwright": "^1.43.0"
+    "playwright": "^1.49.0"
   }
 }
