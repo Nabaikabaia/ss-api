@@ -1,13 +1,17 @@
 {
   "name": "nabees-ss-api",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Screenshot & Screen Recording API by Nabees",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "npx playwright install chromium"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "playwright": "^1.49.0"
+    "express": "^4.18.2",
+    "playwright-chromium": "^1.57.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
