@@ -1,7 +1,11 @@
-const express = require('express');
-const { chromium } = require('playwright-chromium');
-const fs = require('fs');
-const path = require('path');
+import express from 'express';
+import { chromium } from 'playwright-chromium';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -9,30 +13,29 @@ const PORT = process.env.PORT || 10000;
 app.use(express.json());
 app.set('json spaces', 2);
 
+// Temp folder for storing screenshots/videos
 const tempDir = path.join(__dirname, 'temp');
 if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
 
-// Validate input
-const validateInput = (url, device) => {
-  if (!url) return 'URL parameter is required';
-  try { new URL(url); } catch { return 'Invalid URL format'; }
-  const validDevices = ['phone','mobile','tablet','laptop','desktop','full'];
-  if (device && !validDevices.includes(device))
-    return `Invalid device. Must be one of: ${validDevices.join(', ')}`;
-  return null;
-};
-
-// Device viewports
+// Device configurations
 const deviceConfigs = {
   phone: { width: 375, height: 667 },
-  mobile: { width: 375, height: 667 },
   tablet: { width: 768, height: 1024 },
   laptop: { width: 1366, height: 768 },
   desktop: { width: 1920, height: 1080 },
   full: null
 };
 
-// Cleanup old temp files
+// Input validation
+const validateInput = (url, device) => {
+  if (!url) return 'URL parameter is required';
+  try { new URL(url); } catch { return 'Invalid URL format'; }
+  const validDevices = Object.keys(deviceConfigs);
+  if (device && !validDevices.includes(device)) return `Invalid device. Must be one of: ${validDevices.join(', ')}`;
+  return null;
+};
+
+// Cleanup old files
 function cleanupTempFiles() {
   const now = Date.now();
   const thirtyMinutes = 30 * 60 * 1000;
@@ -43,114 +46,121 @@ function cleanupTempFiles() {
       const stats = fs.statSync(filePath);
       if (now - stats.mtime.getTime() > thirtyMinutes) fs.unlinkSync(filePath);
     });
-  } catch {}
+  } catch (e) {}
 }
 setInterval(cleanupTempFiles, 30 * 60 * 1000);
 
-// Screenshot endpoint
-app.get('/api/screenshot', async (req, res) => {
-  const { url, device = 'desktop' } = req.query;
-  const validationError = validateInput(url, device);
-  if (validationError) return res.status(400).json({ error: validationError });
-
-  let browser;
-  try {
-    browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--disable-setuid-sandbox'] });
-    const page = await browser.newPage();
-    if (device !== 'full') await page.setViewportSize(deviceConfigs[device]);
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
-    await page.waitForTimeout(2000);
-    const screenshot = await page.screenshot({ type: 'png', fullPage: device === 'full', animations: 'disabled' });
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Content-Disposition', `inline; filename="nabees-${device}-${Date.now()}.png"`);
-    res.send(screenshot);
-  } catch (err) {
-    res.status(500).json({ error: 'Screenshot failed', message: err.message });
-  } finally { if (browser) await browser.close(); }
-});
-
-// Mobile screenshot shortcut
-app.get('/api/screenshot/mobile', async (req, res) => {
-  const { url } = req.query;
-  if (!url) return res.status(400).json({ error: 'URL parameter is required' });
-
-  let browser;
-  try {
-    browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--disable-setuid-sandbox'] });
-    const page = await browser.newPage();
-    await page.setViewportSize(deviceConfigs.mobile);
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
-    await page.waitForTimeout(2000);
-    const screenshot = await page.screenshot({ type: 'png', fullPage: false, animations: 'disabled' });
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Content-Disposition', `inline; filename="nabees_mobile-${Date.now()}.png"`);
-    res.send(screenshot);
-  } catch (err) {
-    res.status(500).json({ error: 'Screenshot failed', message: err.message });
-  } finally { if (browser) await browser.close(); }
-});
-
-// Screen recording endpoint
-app.get('/api/screenrecord', async (req, res) => {
-  const { url, device = 'desktop', duration = '10' } = req.query;
-  const validationError = validateInput(url, device);
-  if (validationError) return res.status(400).json({ error: validationError });
-
-  let browser, context;
-  const recordingId = Date.now().toString();
-  try {
-    browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--disable-setuid-sandbox'] });
-    context = await browser.newContext({
-      recordVideo: { dir: tempDir, size: device !== 'full' ? deviceConfigs[device] : { width:1920, height:1080 } }
-    });
-    const page = await context.newPage();
-    if (device !== 'full') await page.setViewportSize(deviceConfigs[device]);
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
-    await page.waitForTimeout(3000);
-    const recordDuration = Math.min(parseInt(duration) || 10, 30);
-    await page.waitForTimeout(recordDuration * 1000);
-    await context.close();
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    const videoFiles = fs.readdirSync(tempDir).filter(f => f.endsWith('.webm'));
-    const videoFile = videoFiles.find(f => fs.statSync(path.join(tempDir,f)).mtime.getTime() > Date.now()-10000);
-    if (!videoFile) throw new Error('Video file not found');
-    const videoPath = path.join(tempDir, videoFile);
-    const videoBuffer = fs.readFileSync(videoPath);
-    res.setHeader('Content-Type', 'video/webm');
-    res.setHeader('Content-Disposition', `inline; filename="nabees_rec-${device}-${recordingId}.webm"`);
-    res.send(videoBuffer);
-    fs.unlinkSync(videoPath);
-  } catch (err) {
-    if (context) await context.close();
-    res.status(500).json({ error: 'Screen recording failed', message: err.message });
-  } finally { if (browser) await browser.close(); }
-});
-
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status:200, success:true, info:'online', timestamp: new Date().toISOString() });
-});
-
-// Home page
+// Serve frontend HTML
 app.get('/', (req, res) => {
   res.send(`
 <!DOCTYPE html>
 <html>
 <head>
-<title>Nabees SS API</title>
+<title>Nãbēēs Screenshot & Screen Recording API</title>
+<style>
+body { font-family: Arial; max-width: 800px; margin: 0 auto; padding: 20px; }
+.button { display:inline-block; padding:10px 20px; margin:10px; background:#007bff; color:white; text-decoration:none; border-radius:5px; }
+.button:hover { background:#0056b3; }
+.endpoint { background:#f8f9fa; padding:15px; margin:10px 0; border-radius:5px; }
+</style>
 </head>
 <body>
-<h1>Nabees Screenshot & Screen Recording API</h1>
-<p>Creator: Nabees</p>
-<ul>
-<li><a href="/api/screenshot?url=https://example.com&device=desktop">Screenshot</a></li>
-<li><a href="/api/screenshot/mobile?url=https://example.com">Mobile Screenshot</a></li>
-<li><a href="/api/screenrecord?url=https://example.com&duration=10">Screen Record</a></li>
-<li><a href="/health">Health Check</a></li>
-</ul>
+<h1>Nãbēēs Screenshot & Screen Recording API</h1>
+<p>Creator: Nãbēēs</p>
+
+<div class="endpoint">
+<h3>Screenshot Endpoint</h3>
+<p><strong>URL:</strong> /api/screenshot</p>
+<p><strong>Parameters:</strong> url, device (optional: phone, tablet, laptop, desktop, full)</p>
+</div>
+
+<div class="endpoint">
+<h3>Screen Recording Endpoint</h3>
+<p><strong>URL:</strong> /api/screenrecord</p>
+<p><strong>Parameters:</strong> url, device (optional), duration (optional, max 30s)</p>
+</div>
+
+<div class="endpoint">
+<h3>Example Buttons</h3>
+<a class="button" href="/api/screenshot?url=https://github.com&device=desktop" target="_blank">Try Desktop Screenshot</a>
+<a class="button" href="/api/screenshot?url=https://github.com&device=phone" target="_blank">Try Phone Screenshot</a>
+<a class="button" href="/api/screenrecord?url=https://github.com&device=laptop&duration=10" target="_blank">Try 10s Laptop Recording</a>
+</div>
+
+<a class="button" href="/health">Health Check</a>
 </body>
 </html>
   `);
+});
+
+// Screenshot API (returns URL)
+app.get('/api/screenshot', async (req, res) => {
+  const { url, device = 'desktop' } = req.query;
+  const errMsg = validateInput(url, device);
+  if (errMsg) return res.status(400).json({ error: errMsg });
+
+  const timestamp = Date.now();
+  const filename = `screenshot-${device}-${timestamp}.png`;
+  const filePath = path.join(tempDir, filename);
+
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true, args:['--no-sandbox','--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+    if (device !== 'full') await page.setViewportSize(deviceConfigs[device]);
+    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.waitForTimeout(2000);
+    await page.screenshot({ path: filePath, type: 'png', fullPage: device==='full', animations: 'disabled' });
+
+    res.json({ 
+      success: true, 
+      url: `/temp/${filename}` 
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Screenshot failed', message: err.message });
+  } finally {
+    if (browser) await browser.close();
+  }
+});
+
+// Screen recording API (returns URL)
+app.get('/api/screenrecord', async (req, res) => {
+  const { url, device = 'desktop', duration = 10 } = req.query;
+  const dur = Math.min(Number(duration) || 10, 30);
+  const errMsg = validateInput(url, device);
+  if (errMsg) return res.status(400).json({ error: errMsg });
+
+  const timestamp = Date.now();
+  const filename = `record-${device}-${timestamp}.webm`;
+  const filePath = path.join(tempDir, filename);
+
+  let browser, context, page;
+  try {
+    browser = await chromium.launch({ headless: true, args:['--no-sandbox','--disable-setuid-sandbox'] });
+    context = await browser.newContext({ viewport: deviceConfigs[device] || undefined });
+    page = await context.newPage();
+    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+
+    // Start recording
+    await page.waitForTimeout(1000);
+    await page.startVideo({ path: filePath });
+    await page.waitForTimeout(dur * 1000);
+    await page.close();
+
+    res.json({ success: true, url: `/temp/${filename}` });
+  } catch (err) {
+    res.status(500).json({ error: 'Screen recording failed', message: err.message });
+  } finally {
+    if (browser) await browser.close();
+  }
+});
+
+// Serve temp images/videos publicly
+app.use('/temp', express.static(tempDir));
+
+// Health check
+app.get('/health', (req,res) => {
+  res.json({ status:200, success:true, info:'online', creator:'Nãbēēs', timestamp:new Date().toISOString() });
 });
 
 app.listen(PORT, () => console.log(`🚀 Nabees SS API running on port ${PORT}`));
